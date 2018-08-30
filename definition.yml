@@ -1,6 +1,6 @@
 id: mpath
-docker_repository: dynverse/dynmethods:mpath
-container_url: https://github.com/dynverse/dynmethods/tree/master/containers/mpath
+docker_repository: dynverse/ti_mpath
+container_url: https://github.com/dynverse/ti_mpath
 name: Mpath
 type: algorithm
 doi: 10.1038/ncomms11988
