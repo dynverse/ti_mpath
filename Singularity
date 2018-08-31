@@ -12,6 +12,7 @@ From: dynverse/dynwrap:r
 
 %post
     chmod -R a+r /code
+    chmod a+x /code
     R -e 'devtools::install_github("dynverse/Mpath")'
 
 %files
