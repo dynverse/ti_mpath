@@ -1,5 +1,6 @@
 id: mpath
 docker_repository: dynverse/ti_mpath
+singularity_collection: 1557
 container_url: https://github.com/dynverse/ti_mpath
 name: Mpath
 type: algorithm
