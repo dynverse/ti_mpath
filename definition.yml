@@ -7,7 +7,11 @@ type: algorithm
 doi: 10.1038/ncomms11988
 google_scholar_cluster_id: '13279740541516941155'
 platform: R
-trajectory_types: linear
+trajectory_types: 
+  - linear
+  - bifurcation
+  - multifurcation
+  - tree
 topology_inference: free
 publication_date: '2016-06-30'
 code_url: https://github.com/JinmiaoChenLab/Mpath
