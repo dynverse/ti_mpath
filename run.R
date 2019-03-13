@@ -1,3 +1,7 @@
+#!/usr/local/bin/Rscript
+
+task <- dyncli::main()
+
 library(jsonlite)
 library(readr)
 library(dplyr)
@@ -8,17 +12,12 @@ library(Mpath)
 #   ____________________________________________________________________________
 #   Load data                                                               ####
 
-data <- read_rds("/ti/input/data.rds")
-params <- jsonlite::read_json("/ti/input/params.json")
+counts <- as.matrix(task$counts)
+params <- task$params
+groups_id <- task$priors$groups_id
 
-#' @examples
-#' data <- dyntoy::generate_dataset(id = "test", num_cells = 300, num_features = 300, model = "linear") %>% c(., .$prior_information)
-#' params <- yaml::read_yaml("containers/mpath/definition.yml")$parameters %>%
-#'   {.[names(.) != "forbidden"]} %>%
-#'   map(~ .$default)
-
-counts <- data$counts
-groups_id <- data$groups_id
+#   ____________________________________________________________________________
+#   Run method                                                              ####
 
 if (params$numcluster_null) {
   numcluster <- NULL
@@ -98,4 +97,11 @@ output <- lst(
 #   ____________________________________________________________________________
 #   Save output                                                             ####
 
-write_rds(output, "/ti/output/output.rds")
+output <- dynwrap::wrap_data(cell_ids = names(grouping)) %>%
+  dynwrap::add_cluster_graph(
+    milestone_network = milestone_network,
+    grouping = grouping
+  ) %>%
+  dynwrap::add_timings(checkpoints)
+
+dyncli::write_output(output, task$output)
