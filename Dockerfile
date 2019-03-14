@@ -8,6 +8,6 @@ RUN R -e 'devtools::install_github("dynverse/Mpath")'
 # RUN R -e 'devtools::install_url("https://github.com/JinmiaoChenLab/Mpath/raw/master/Mpath_1.0.tar.gz")'
 # but dynverse/Mpath is just so much easier to use than the tar gz above
 
-COPY definition.yml run.R example.h5 /code/
+COPY definition.yml run.R example.sh /code/
 
 ENTRYPOINT ["/code/run.R"]
