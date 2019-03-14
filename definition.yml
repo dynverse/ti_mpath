@@ -34,7 +34,6 @@ wrapper:
   - bifurcation
   - multifurcation
   - tree
-  example: /code/example.R
   input_required:
   - counts
   - groups_id
