@@ -13,13 +13,13 @@ library(Mpath)
 #   Load data                                                               ####
 
 counts <- as.matrix(task$counts)
-params <- task$params
+parameters <- task$parameters
 groups_id <- task$priors$groups_id
 
 #   ____________________________________________________________________________
 #   Run method                                                              ####
 
-if (params$numcluster_null) {
+if (parameters$numcluster_null) {
   numcluster <- NULL
 }
 
@@ -34,11 +34,11 @@ landmark_cluster <- Mpath::landmark_designation(
   rpkmFile = t(counts),
   baseName = NULL,
   sampleFile = sample_info,
-  distMethod = params$distMethod,
-  method = params$method,
-  numcluster = min(params$numcluster, nrow(counts) - 1),
-  diversity_cut = params$diversity_cut,
-  size_cut = params$size_cut,
+  distMethod = parameters$distMethod,
+  method = parameters$method,
+  numcluster = min(parameters$numcluster, nrow(counts) - 1),
+  diversity_cut = parameters$diversity_cut,
+  size_cut = parameters$size_cut,
   saveRes = FALSE
 ) %>%
   mutate_if(is.factor, as.character)
@@ -62,7 +62,7 @@ if (length(milestone_ids) == 1) {
     exprs = t(counts),
     baseName = NULL,
     landmark_cluster = landmark_cluster,
-    distMethod = params$distMethod,
+    distMethod = parameters$distMethod,
     writeRes = FALSE
   )
 
