@@ -1,26 +1,23 @@
-library(jsonlite)
-library(readr)
-library(dplyr)
-library(purrr)
+#!/usr/local/bin/Rscript
 
-library(Mpath)
+task <- dyncli::main()
+
+library(dplyr, warn.conflicts = FALSE)
+library(purrr, warn.conflicts = FALSE)
+library(dynwrap, warn.conflicts = FALSE)
+library(Mpath, warn.conflicts = FALSE)
 
 #   ____________________________________________________________________________
 #   Load data                                                               ####
 
-data <- read_rds("/ti/input/data.rds")
-params <- jsonlite::read_json("/ti/input/params.json")
+counts <- as.matrix(task$counts)
+parameters <- task$parameters
+groups_id <- task$priors$groups_id
 
-#' @examples
-#' data <- dyntoy::generate_dataset(id = "test", num_cells = 300, num_features = 300, model = "linear") %>% c(., .$prior_information)
-#' params <- yaml::read_yaml("containers/mpath/definition.yml")$parameters %>%
-#'   {.[names(.) != "forbidden"]} %>%
-#'   map(~ .$default)
+#   ____________________________________________________________________________
+#   Run method                                                              ####
 
-counts <- data$counts
-groups_id <- data$groups_id
-
-if (params$numcluster_null) {
+if (parameters$numcluster_null) {
   numcluster <- NULL
 }
 
@@ -35,11 +32,11 @@ landmark_cluster <- Mpath::landmark_designation(
   rpkmFile = t(counts),
   baseName = NULL,
   sampleFile = sample_info,
-  distMethod = params$distMethod,
-  method = params$method,
-  numcluster = min(params$numcluster, nrow(counts) - 1),
-  diversity_cut = params$diversity_cut,
-  size_cut = params$size_cut,
+  distMethod = parameters$distMethod,
+  method = parameters$method,
+  numcluster = min(parameters$numcluster, nrow(counts) - 1),
+  diversity_cut = parameters$diversity_cut,
+  size_cut = parameters$size_cut,
   saveRes = FALSE
 ) %>%
   mutate_if(is.factor, as.character)
@@ -63,7 +60,7 @@ if (length(milestone_ids) == 1) {
     exprs = t(counts),
     baseName = NULL,
     landmark_cluster = landmark_cluster,
-    distMethod = params$distMethod,
+    distMethod = parameters$distMethod,
     writeRes = FALSE
   )
 
@@ -98,4 +95,11 @@ output <- lst(
 #   ____________________________________________________________________________
 #   Save output                                                             ####
 
-write_rds(output, "/ti/output/output.rds")
+output <- dynwrap::wrap_data(cell_ids = names(grouping)) %>%
+  dynwrap::add_cluster_graph(
+    milestone_network = milestone_network,
+    grouping = grouping
+  ) %>%
+  dynwrap::add_timings(checkpoints)
+
+dyncli::write_output(output, task$output)
